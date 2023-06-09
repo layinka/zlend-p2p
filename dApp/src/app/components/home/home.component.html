@@ -1,0 +1,43 @@
+<div class="background">
+    <div class="container-fluid pt-5 transbox" >
+        <h1 class="text-center"></h1>
+        <h2 class="text-center">zLend - Crypto Lending Protocol</h2>
+
+        <h5 class="text-center mt-4" *ngIf="zlendBalance"> ZLend Balance: <img src="https://place-hold.it/42/ffffff/2313f6/121221?bold&fontsize=24&text=Z" class="img-fluid" /> {{zlendBalance | number: '1.2-2' }} zLend </h5>
+    
+        <div class="container mt-5 text-center">
+            
+            <div class="row">
+                <div class="col">
+                    <h3 *ngIf="!deposits">Loading ...</h3>
+                  
+
+                    <h3 *ngIf="loans && deposits">Current Balance: ${{(deposits.balance - loans.balance)??'0' | number: '1.2-2'}}</h3>
+
+                    <p><a routerLink="/docs/docs-main">Learn More </a></p>
+
+                    <div class="row my-4">
+                        <div class="col-12 col-md-6">
+                            <your-deposits></your-deposits>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <your-borrowals></your-borrowals>
+                        </div>
+                    </div>
+
+                    <div class="row my-4">
+                        <div class="col-12 col-md-6">
+                            <deposit-assets></deposit-assets>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <borrow-assets></borrow-assets>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>

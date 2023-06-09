@@ -1,0 +1,152 @@
+<c-toaster class="p-3" [placement]="placement" poxition="fixed"></c-toaster>
+
+<div class="container-fluid ">
+
+    <div class="row d-flex justify-content-center">
+      <div *ngIf="!vault" class="col-12 d-flex justify-content-center">
+        <div >Loading ...</div>
+      </div>
+      <div class="col-9" *ngIf="vault">
+        <div *ngIf="!isBeneficiary && !isOwner && !isSignatory">
+          <div>
+            UnAuthorized
+          </div>
+        </div>
+        <div class="card m-3 " *ngIf="isBeneficiary || isOwner || isSignatory">
+          <div class="card-header d-flex justify-content-between">
+            <div class="text-left">
+              <h3><strong>Vault :</strong> {{vault?.name??''}}</h3>
+              <h6 class="" >Address: {{vault.address}}</h6>
+            </div>
+            <div class="">
+              <button *ngIf=" isOwner " (click)="submitRefresh()" class="btn btn-primary">Refresh Now</button>
+
+              <button *ngIf="isSignatory" (click)="releaseAssets()" class="btn btn-primary">Release Assets</button>
+
+              <button *ngIf="isBeneficiary " (click)="claimAssets()" class="btn btn-primary ms-2">{{hasClaimed ? 'Assets Claimed':'Claim Assets'}}</button>
+            </div>
+            
+          </div>
+          <div class="card-body">
+            <div class="alert alert-danger">
+              <p>
+                This Vault is configured to give up its assets to the benficiaries below unless its refreshed by the Vault Owner before {{vault.expiryTime| date: 'MMM dd, yyyy hh:mm:ss '}}
+              </p>
+              <button *ngIf=" isOwner " (click)="submitRefresh()" class="btn btn-primary mx-2 my-2 px-4 py-2">Refresh Now to add 30 days</button>
+            </div>
+            <div >
+                
+                <div class="card" *ngIf=" isOwner || isBeneficiary ">
+                  <div class="card-header">
+                    <h4>Assets in this Vault</h4>
+                  </div>
+                  <div class="card-body">
+                    <table class="table  table-condensed table-hover asset-table">
+                      <thead>
+                          <tr>
+                              <th scope="col">Asset</th>
+                              
+                              <th scope="col">Balance</th>
+                              <th scope="col"></th>
+                              
+                          </tr>
+                      </thead>
+
+                      <tbody>
+                          <tr scope="row" >
+                              <td ><div *ngIf="nativeCoin">{{nativeCoin.name}}({{nativeCoin.symbol}})</div></td>
+                              <td>{{coinBalance | number: '1.2-6'}}</td>
+                              <td>
+                                <div class="d-flex justify-content-left">
+                                  <button class="btn btn-success m-2 px-2 " *ngIf="isOwner " (click)="topup()">Top Up</button>
+                                  <button class="btn btn-info m-2 px-2 " *ngIf="isOwner ">Invest</button>
+                                  <button class="btn btn-danger m-2 px-2 " *ngIf="isOwner ">Withdraw</button>
+                                  <button class="btn btn-danger m-2 px-2 " *ngIf="isBeneficiary " [disabled]="hasClaimed" (click)="claimAssets()">Claim</button>
+                                </div> 
+                              </td>
+                              
+                          </tr>
+                      </tbody>
+                  </table>
+                  </div>
+                </div>
+                
+                
+
+                <div class="card text-white bg-primary mt-4 px-2 py-2" >
+                  <div class="card-header">
+                      <h3>Beneficiaries</h3>
+                  </div>
+                  <div class="card-body text-white">
+    
+    
+                      <table class="table table-responsive table-condensed table-hover table-primary  beneficiary-table ">
+                          <thead>
+                              <tr>
+                                  <th scope="col">Beneficiary</th>
+                                  
+                                  <th scope="col">Percentage Entitled to</th>
+                                  <th scope="col">Claimed</th>
+                              </tr>
+                          </thead>
+    
+                          <tbody class="">
+                              <tr class="bg-primary" scope="row" *ngFor="let beneficiary of  beneficiaries" >
+                                  <td>{{beneficiary.name }}({{beneficiary.beneficiaryAddress}})</td>
+                                  <td>{{beneficiary.percent | number: '1.2-2'}} %</td>
+                                  <td> {{(hasClaimed || beneficiary.claimed) ?"Claimed":"Unclaimed" }}</td>
+                                  
+                              </tr>
+                          </tbody>
+                      </table>
+    
+                      
+                  </div>
+                </div>
+    
+                <div class="card mt-4 px-2 py-2" >
+                  <div class="card-header">
+                      <h3>Signatories</h3>
+                  </div>
+                  <div class="card-body">
+    
+    
+                      <table class="table table-responsive table-condensed table-hover signatory-table">
+                          <thead>
+                              <tr>
+                                  <th scope="col">Signatory</th>
+                                  
+                                  <th scope="col">Sign up fee</th>
+                                  <th scope="col">Minimum Reward</th>
+                                  <th scope="col">Free Bond</th>
+                              </tr>
+                          </thead>
+    
+                          <tbody>
+                              <tr scope="row" *ngFor="let signatory of  signatories" >
+                                  <td>{{signatory.address}}</td>
+                                  <td><img class="heritage-coin-symbol" src="http://place-hold.it/20?text=H" /> {{signatory.bounty | number: '1.2-2'}}</td>
+                                  <td><img class="heritage-coin-symbol" src="http://place-hold.it/20?text=H" /> {{signatory.minimumDiggingFee | number: '1.2-2'}}</td>
+                                  <td><img class="heritage-coin-symbol" src="http://place-hold.it/20?text=H" /> {{ signatory.freeBond | number: '1.2-2'}}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+    
+                      
+                  </div>
+                </div>
+                  
+            </div>
+            
+
+           
+          </div>
+      
+        </div>
+      
+ 
+      </div>
+    </div>
+    
+  
+</div>

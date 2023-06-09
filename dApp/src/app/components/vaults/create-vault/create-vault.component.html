@@ -1,0 +1,300 @@
+
+<c-toaster class="p-3" [placement]="placement" poxition="fixed"></c-toaster>
+
+<div class="row">
+  <div class="col-12">
+    <form [formGroup]="mainFormGroup" class="main-form needs-validation" novalidate [validated]="false" cForm>
+          
+        <div >
+            <div class="mb-4">
+                <h4><b>Vault Details</b></h4>
+                <div>You need a miminum of 500 Heritage Tokens to Create, Contact us on Tron DAO for Testnet HRT tokens to test
+                    <div *ngIf="heritageTokenBalance" >
+                        <b>Current Balance: </b> {{heritageTokenBalance| number: '1.0-2'}} HRT
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mb-2 ">
+                    <!-- <h4 class="text-em">Give your Vault a Label</h4> -->
+                    <div [cFormFloating]="true" class="form-floating mb-2">
+                        <input type="text" class="form-control" formControlName="vaultLabel" [ngClass]="{ 'is-invalid': mainFormGroup.get('vaultLabel').touched && mainFormGroup.get('vaultLabel').invalid, 'is-valid': mainFormGroup.get('vaultLabel').touched && mainFormGroup.get('vaultLabel').valid }">
+                        <label for="vaultLabel">Give your Vault a Label</label>
+
+                        <div cFormText class="mt-2" >                            
+                        </div>
+
+                        <div class="error-message" *ngIf="mainFormGroup.get('vaultLabel').invalid && mainFormGroup.get('vaultLabel').touched">
+                            <div *ngFor="let error of  objectKeys(mainFormGroup.get('vaultLabel')?.errors)">                                        
+                            {{validationMessages.vaultLabel[error]}}
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+
+                <div class="col-12 mb-2" >
+                    <div [cFormFloating]="true" class="mb-2">
+                    <input type="email" class="form-control" formControlName="email" [ngClass]="{ 'is-invalid': mainFormGroup.get('email').touched && mainFormGroup.get('email').invalid, 'is-valid': mainFormGroup.get('email').touched && mainFormGroup.get('email').valid }">
+                    <label for="email">Your Email</label>
+
+                    <div cFormText class="mt-2" >
+                        We will send notifications to this email to confirm if you still want this Vault encrypted                        
+                    </div>
+
+                    <div class="error-message" *ngIf="mainFormGroup.get('email').invalid && mainFormGroup.get('email').touched">
+                        <div *ngFor="let error of  objectKeys(mainFormGroup.get('email')?.errors)">                                        
+                        {{validationMessages.email[error]}}
+                        </div>
+                    </div>
+                </div>
+                </div>
+                                         
+            </div>
+            
+        </div>
+        
+        <div class="mb-2">
+            <h4><b>Vault Type</b></h4>
+            <small class="text-em"
+            >Select the type of vault you will like to create</small
+            >
+        </div>
+        <div class="row mb-4">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body p-0">
+                        <input
+                            class="btn-check"
+                            formControlName="vaultType"                            
+                            type="radio"                            
+                            value="Custodial"
+                        />
+                        <label
+                            class="p-4"
+                            style="width: 100%"
+                            cButton
+                            cFormCheckLabel
+                            for="radiocl"
+                            variant="outline"
+                            (click)="setVaultType('Custodial')"
+                        >
+                            <div>
+                            <h4 class="w-100 text-right">Custodial Assets</h4>
+
+                            <p>
+                                This type of Vault only stores anything related to
+                                Cryptocurrencies Such as: Tokens, Coins e.t.c.
+                                <a href="#">learn more</a>
+                            </p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body p-0">
+                    <input
+                        class="btn-check"
+                        formControlName="vaultType"
+                        type="radio"
+                        value="Encrypted"
+                    />
+                    <label
+                    class="p-4"
+                    style="width: 100%"
+                    cButton
+                    cFormCheckLabel
+                    for="radiofl"
+                    variant="outline"                    
+                    (click)="setVaultType('Encrypted')"
+                    >
+                        <div>
+                        <h4 class="w-100 text-right">Encrypted File Vault</h4>
+                        <p>
+                            This type of Vault allows you to store Digital Assets
+                            such as: Will document (.pdf, .txt, .docs, e.t.c),
+                            e.t.c.
+                            <a href="#">learn more</a>
+                        </p>
+                        </div>
+                    </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+
+        <div class="row my-4">
+            <div *ngIf="mainFormGroup.get('vaultType').value == 'Encrypted' " class="col-12 mb-4">
+                <h4 class="text-em">Upload your Payload</h4>
+                <div [cFormFloating]="true" class=" mb-2">
+                    <input type="file" class="form-control" formControlName="payLoad" [ngClass]="{ 'is-invalid': mainFormGroup.get('payLoad').touched && mainFormGroup.get('payLoad').invalid, 'is-valid': mainFormGroup.get('payLoad').touched && mainFormGroup.get('payLoad').valid }">
+                    <label for="payLoad">Give your Vault a Label</label>
+
+                    <div cFormText class="mt-2" >
+                        This can be a Document containing your will, your password, or even a privte key to your Crypto wallet (.pdf, .txt, .docs, e.t.c)
+                        <a href="#">learn more</a>                            
+                    </div>
+
+                    <div class="error-message" *ngIf="mainFormGroup.get('payLoad').invalid && mainFormGroup.get('payLoad').touched">
+                        <div *ngFor="let error of  objectKeys(mainFormGroup.get('payLoad')?.errors)">                                        
+                        {{validationMessages.payLoad[error]}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+            
+                <div [cFormFloating]="true" class=" mb-2">
+                    <input type="datetime-local" class="form-control" formControlName="resurrectionTime" [ngClass]="{ 'is-invalid': mainFormGroup.get('resurrectionTime').touched && mainFormGroup.get('resurrectionTime').invalid, 'is-valid': mainFormGroup.get('resurrectionTime').touched && mainFormGroup.get('resurrectionTime').valid }">
+                    <label for="resurrectionTime">Resurrection Time</label>
+
+                    <div cFormText class="mt-2" >
+                        The Time you want this Vault to be opened , if no action is taken by you                          
+                    </div>
+
+                    <div class="error-message" *ngIf="mainFormGroup.get('resurrectionTime').invalid && mainFormGroup.get('resurrectionTime').touched">
+                        <div *ngFor="let error of  objectKeys(mainFormGroup.get('resurrectionTime')?.errors)">                                        
+                        {{validationMessages.resurrectionTime[error]}}
+                        </div>
+                    </div>
+                </div> 
+            </div> 
+        </div>
+
+        <div class="card my-4">
+            <div class="card-header"><h4>Beneficiary</h4>
+                <p>Who Gets The Assets/Contents of this Vault on Expiry?</p>
+            </div>
+            <div class="card-body">
+
+                <!-- Beneficiary Name and Email -->
+                <div class="row">
+                    <div class="col mb-2">
+                        <div [cFormFloating]="true" class="">
+                            <input type="text" class="form-control" formControlName="beneficiaryName" [ngClass]="{ 'is-invalid': mainFormGroup.get('beneficiaryName').touched && mainFormGroup.get('beneficiaryName').invalid, 'is-valid': mainFormGroup.get('beneficiaryName').touched && mainFormGroup.get('beneficiaryName').valid }">
+                            <label for="beneficiaryName">Beneficiary Nickname</label>
+
+                            <div cFormText class="mt-2" >
+                                The Beneficiary's Name or Alias - anything to identify the Beneficiary
+                                                        
+                            </div>
+
+                            <div class="error-message" *ngIf="mainFormGroup.get('beneficiaryName').invalid && mainFormGroup.get('beneficiaryName').touched">
+                                <div *ngFor="let error of  objectKeys(mainFormGroup.get('beneficiaryName')?.errors)">                                        
+                                {{validationMessages.beneficiaryName[error]}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    <div  class="col ">
+                        <div [cFormFloating]="true" class="mb-2">
+                            <input type="text" class="form-control" formControlName="beneficiaryPubKey" [ngClass]="{ 'is-invalid': mainFormGroup.get('beneficiaryPubKey').touched && mainFormGroup.get('beneficiaryPubKey').invalid, 'is-valid': mainFormGroup.get('beneficiaryPubKey').touched && mainFormGroup.get('beneficiaryPubKey').valid }">
+                            <label for="beneficiaryPubKey">Beneficiary Public Key</label>
+
+                            <div cFormText class="mt-2" >
+                                The Beneficiary's Public key (Not Address)
+                                                        
+                            </div>
+
+                            <div class="error-message" *ngIf="mainFormGroup.get('beneficiaryPubKey').invalid && mainFormGroup.get('beneficiaryPubKey').touched">
+                                <div *ngFor="let error of  objectKeys(mainFormGroup.get('beneficiaryPubKey')?.errors)">                                        
+                                {{validationMessages.beneficiaryPubKey[error]}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="col-12 mt-4">
+                        <div [cFormFloating]="true" class=" mb-2">
+                            <input type="number" class="form-control" formControlName="beneficiaryPercent" [ngClass]="{ 'is-invalid': mainFormGroup.get('beneficiaryPercent').touched && mainFormGroup.get('beneficiaryPercent').invalid, 'is-valid': mainFormGroup.get('beneficiaryPercent').touched && mainFormGroup.get('beneficiaryPercent').valid }">
+                            <label for="beneficiaryPercent">Beneficiary Share %</label>
+
+                            <div cFormText class="mt-2" >
+                                The Percentge of Assets in this Vault that the beneficiary willl have access to                       
+                            </div>
+
+                            <div class="error-message" *ngIf="mainFormGroup.get('beneficiaryPercent').invalid && mainFormGroup.get('beneficiaryPercent').touched">
+                                <div *ngFor="let error of  objectKeys(mainFormGroup.get('beneficiaryPercent')?.errors)">                                        
+                                {{validationMessages.beneficiaryPercent[error]}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-12 mt-4">
+                        <div [cFormFloating]="true" class=" mb-2">
+                            <input type="email" class="form-control" formControlName="beneficiaryEmail" [ngClass]="{ 'is-invalid': mainFormGroup.get('beneficiaryEmail').touched && mainFormGroup.get('beneficiaryEmail').invalid, 'is-valid': mainFormGroup.get('beneficiaryEmail').touched && mainFormGroup.get('beneficiaryEmail').valid }">
+                            <label for="beneficiaryEmail">Beneficiary Email</label>
+
+                            <div cFormText class="mt-2" >
+                                Beneficiary will be notified via this email                         
+                            </div>
+
+                            <div class="error-message" *ngIf="mainFormGroup.get('beneficiaryEmail').invalid && mainFormGroup.get('beneficiaryEmail').touched">
+                                <div *ngFor="let error of  objectKeys(mainFormGroup.get('beneficiaryEmail')?.errors)">                                        
+                                {{validationMessages.beneficiaryEmail[error]}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+
+
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="card mt-4 px-2 py-2" >
+            <div class="card-header">
+                <h3>Signatories</h3>
+            </div>
+            <div class="card-body">
+
+
+                <table class="table table-responsive table-condensed table-hover signatory-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Signatory</th>
+                            
+                            <th scope="col">Sign up fee</th>
+                            <th scope="col">Minimum Reward</th>
+                            <th scope="col">Free Bond</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr scope="row" *ngFor="let signatory of  signatories" [ngClass]="(selectedSignatory && signatory.address == selectedSignatory.address) ? 'selected active' : ''" (click)="setSignatory(signatory)">
+                            <td>{{signatory.address}}</td>
+                            <td><img class="heritage-coin-symbol" src="http://place-hold.it/20?text=H" /> {{signatory.bounty | number: '1.2-2'}}</td>
+                            <td><img class="heritage-coin-symbol" src="http://place-hold.it/20?text=H" /> {{signatory.minimumDiggingFee | number: '1.2-2'}}</td>
+                            <td><img class="heritage-coin-symbol" src="http://place-hold.it/20?text=H" /> {{ signatory.freeBond | number: '1.2-2'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                
+            </div>
+        </div>
+
+        
+        <div class="d-flex justify-content-end m-4">
+        
+            <button type="submit"  class="btn btn-primary px-4" (click)="submitCreateVault()">Create Vault</button>
+        </div>
+      
+    </form>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+
+
+.btn-check:checked + label{
+    
+    border: 2px solid rgb(168, 212, 12) !important;
+    border-radius: 0.45rem;
+}
+
+/*         aNIMATION */
+.btn-check:checked + label>img{
+    transform: scale(1.25);
+    opacity: 0.3;
+}
+
+
+
+.error-message{
+    color: red;
+}
+
+
+.table.signatory-table .selected{
+    background-color: #f7cdfa;
+} 

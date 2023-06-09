@@ -1,0 +1,168 @@
+<c-toaster class="p-3" position="fixed" [placement]="placement"></c-toaster>
+
+<div class="card" >
+    <div class="card-header">
+        <h3>Your Loans</h3>
+        Balance : ${{loans?.balance ?? "0" | number: '1.2-2'}}
+    </div>
+    <div class="card-body " >
+
+        <span *ngIf="!loans">Loading ...</span>
+
+        <table *ngIf="loans" class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="px-4 font-semibold">
+                    Assets
+                  </th>
+                  <th scope="col" class="px-4 py-2 font-semibold">
+                    Debts
+                  </th>
+                  <th scope="col" class="px-4 py-2 font-semibold">
+                    APY
+                  </th>
+                  <th scope="col" class="px-4 py-2 font-semibold">
+                    APY Type
+                  </th>
+                  <th scope="col" class="px-4 py-2 font-semibold"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+                <tr scope="row" *ngIf="loans.loans.length<1">
+                    <td colspan="5" class="text-center">
+                        No Loans yet!
+                    </td>
+                </tr>
+
+                <tr scope="row" *ngFor="let token of  loans.loans">
+                    <th class="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+                        <div class="flex items-center">
+                          <img [src]="'/assets/token-logos/' + token.name.toLowerCase() + '.png'" class="img-fluid" alt="coin image" style="width:80px"  />
+                          <div class="ml-2 text-gray-800">{{token.name}}</div>
+                        </div>
+                    </th>
+                    <td class="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        <div class="text-base font-medium text-gray-800">{{todp(token.userTokenBorrowedAmount.amount, 4)}}</div>
+                        <div class="text-sm text-gray-500">(${{token.userTokenBorrowedAmount.inDollars| number: '1.2-2'}})</div>
+                    </td>
+                    <td class="border-t-0 px-4 border  align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        <div class="text-base">{{ (token.borrowAPYRate * 100) | number: '1.2-2'}}%</div>
+                    </td>
+                    <td class="border-t-0 px-4 border  align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        Stable
+                    </td>
+                    <td class="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        
+
+                        <button (click)="openBorrowModal(token)" class="btn btn-danger m-2 p-2">Borrow</button>
+
+                        <button (click)="openRepayModal(token)" class="btn btn-primary m-2 p-2">Repay</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+
+
+<c-modal  [visible]="borrowModalVisible" >
+    <c-modal-header>
+      <h5 cModalTitle>Borrow <span class="ml-2 text-gray-800">{{selectedToken?.name??''}}</span> </h5>
+      <button (click)="closeBorrowModal()" cButtonClose>x</button>
+    </c-modal-header>
+  
+    <c-modal-body>
+    
+        
+
+        <form *ngIf="borrowFormGroup"  [formGroup]="borrowFormGroup" class="whitelist-form needs-validation"  novalidate [validated]="false"  cForm>
+          <div class="row">
+              
+              <div class="col-12" >
+                  <div [cFormFloating]="true" class="my-3" >
+                    <input cFormControl  type="number"  placeholder="" formControlName="amount"  sizing="sm"  [ngClass]="{ 'is-invalid': borrowFormGroup.get('amount').touched && borrowFormGroup.get('amount').invalid, 'is-valid': borrowFormGroup.get('amount').touched && borrowFormGroup.get('amount').valid }"/>
+
+                    <label cLabel for="list">Amount to Borrow</label>
+                      
+                    <div cFormText class="mt-2">
+                        You can borrow any amount. <br/>
+                        
+                        <div class="alert alert-info">You will be prompted to approve your token for this contract</div>
+                    </div>
+  
+                      <div class="error-message" *ngIf="borrowFormGroup.get('amount').invalid && borrowFormGroup.get('amount').touched">
+                          <div *ngFor="let error of  objectKeys(borrowFormGroup.get('amount')?.errors)">                                        
+                          {{validationMessages.amount[error]}}
+                          </div>
+                      </div>
+  
+                  </div>
+              </div>
+              
+  
+          </div>
+        </form>
+    </c-modal-body>
+  
+    <c-modal-footer>
+        
+      <button (click)="closeBorrowModal()" cButton color="secondary">
+        Close
+      </button>
+      <button class="btn btn-primary" *ngIf="borrowFormGroup" [disabled]="borrowFormGroup.invalid " (click)="borrowCoin()">Borrow</button>
+    </c-modal-footer>
+</c-modal>
+
+
+
+<c-modal  [visible]="repayModalVisible" >
+    <c-modal-header>
+      <h5 cModalTitle>Repay <span class="ml-2 text-gray-800">{{selectedToken?.name??''}}</span> </h5>
+      <button (click)="closeRepayModal()" cButtonClose>x</button>
+    </c-modal-header>
+  
+    <c-modal-body>
+    
+        
+
+        <form *ngIf="repayFormGroup"  [formGroup]="repayFormGroup" class="whitelist-form needs-validation"  novalidate [validated]="false"  cForm>
+          <div class="row">
+              
+              <div class="col-12" >
+                  <div [cFormFloating]="true" class="my-3" >
+                    <input cFormControl  type="number"  placeholder="" formControlName="amount"  sizing="sm"  [ngClass]="{ 'is-invalid': repayFormGroup.get('amount').touched && repayFormGroup.get('amount').invalid, 'is-valid': repayFormGroup.get('amount').touched && repayFormGroup.get('amount').valid }"/>
+
+                    <label cLabel for="list">Amount to Repay</label>
+                      
+                    <div cFormText class="mt-2">
+                        You can repay any amount. <br/>
+                        
+                        <div class="alert alert-info">You will be prompted to approve your token for this contract</div>
+                    </div>
+  
+                      <div class="error-message" *ngIf="repayFormGroup.get('amount').invalid && repayFormGroup.get('amount').touched">
+                          <div *ngFor="let error of  objectKeys(repayFormGroup.get('amount')?.errors)">                                        
+                          {{validationMessages.amount[error]}}
+                          </div>
+                      </div>
+  
+                  </div>
+              </div>
+              
+  
+          </div>
+        </form>
+    </c-modal-body>
+  
+    <c-modal-footer>
+        
+      <button (click)="closeRepayModal()" cButton color="secondary">
+        Close
+      </button>
+      <button class="btn btn-primary" *ngIf="repayFormGroup" [disabled]="repayFormGroup.invalid " (click)="repayCoin()">Repay</button>
+    </c-modal-footer>
+</c-modal>

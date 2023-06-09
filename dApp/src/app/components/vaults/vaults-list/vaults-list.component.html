@@ -1,0 +1,29 @@
+<c-toaster class="p-3" [placement]="placement" poxition="fixed"></c-toaster>
+
+<div *ngIf="!vaults">
+
+	Loading ...
+</div>
+
+<div class="row" *ngIf="vaults">
+
+	<div class="col">
+		
+		<div class="row">
+
+			<div class="col-6 col-md-3" *ngFor="let vault of  vaults" >
+				<div class="card mx-2 my-2 px-2 py-2" [routerLink]="['/vaults','view', vault.vaultId]">
+					<div class="card-body">
+						<img src="https://place-hold.it/320x240?text={{vault.name.substring(0,1)}}" class="img-fluid" />
+						
+
+						<br/>
+						<h3 class="text-center"><a [routerLink]="['/vaults','view', vault.vaultId]">{{vault.name}} </a></h3>
+						
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>

@@ -1,0 +1,171 @@
+<c-toaster class="p-3" position="fixed" [placement]="placement"></c-toaster>
+
+
+<div class="card bg-primary text-white" >
+    <div class="card-header">
+        <h3>Your Deposits</h3>
+        Balance : ${{(deposits?.balance ?? "0") | number: '1.2-2'}}
+    </div>
+    <div class="card-body text-white">
+        <span *ngIf="!deposits">Loading ...</span>
+        <table *ngIf="deposits" class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="px-4 font-semibold text-white-200">
+                  Assets
+                </th>
+                <th scope="col" class="px-4 py-2 font-semibold text-white-200">
+                  Balance
+                </th>
+                <th scope="col" class="px-4 py-2 font-semibold text-white-200">
+                  APY
+                </th>
+                <th scope="col" class="px-4 py-2 font-semibold text-white-200">
+                  Collateral
+                </th>
+                <th scope="col" class="px-4 py-2 font-semibold text-white-200"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+                <tr scope="row" *ngIf="deposits.deposits.length<1">
+                    <td colspan="5" class="text-center text-white-200">
+                        No Deposits yet!
+                    </td>
+                </tr>
+                <tr scope="row" *ngFor="let token of  deposits.deposits" >
+                    <th class="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+                        <div class="flex items-center">
+                          <img [src]="'/assets/token-logos/' + token.name.toLowerCase() + '.png'" class="img-fluid" alt="coin image" style="width:80px"  />
+                          <div class="ml-2 text-white">{{token.name}}</div>
+                        </div>
+                    </th>
+                    <td class="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        <div class="text-base font-medium text-white">{{token.userTokenLentAmount.amount | number: '1.2-4'}}</div>
+                        <div class="text-sm text-white">(${{token.userTokenLentAmount.inDollars| number: '1.2-2'}})</div>
+                        
+                    </td>
+                    <td class="border-t-0 px-4 border  align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <div class="text-base">N/A</div>
+                    </td>
+                    <td class="border-t-0 px-4 border  align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <div class="text-green-700 text-lg font-large"> &#10004; </div>
+                    </td>
+                    <td class="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        <button (click)="openDepositModal(token)" class="btn btn-success m-2 p-2">Deposit</button>
+
+                        <button (click)="openWithdrawModal(token)" class="btn btn-danger m-2 p-2">Withdraw</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<c-modal id="depositModal" [visible]="depositCoinModalVisible" >
+    <c-modal-header>
+      <h5 cModalTitle>Deposit <span class="ml-2 text-white">{{selectedToken?.name??''}}</span> </h5>
+      <button (click)="closeDepositModal()" cButtonClose>x</button>
+    </c-modal-header>
+  
+    <c-modal-body>
+    
+        
+
+        <form *ngIf="depositFormGroup"  [formGroup]="depositFormGroup" class="whitelist-form needs-validation"  novalidate [validated]="false"  cForm>
+          <div class="row">
+              
+              <div class="col-12" >
+                  <div [cFormFloating]="true" class="my-3" >
+                    <input cFormControl  type="number"  placeholder="" formControlName="amount"  sizing="sm"  [ngClass]="{ 'is-invalid': depositFormGroup.get('amount').touched && depositFormGroup.get('amount').invalid, 'is-valid': depositFormGroup.get('amount').touched && depositFormGroup.get('amount').valid }"/>
+
+                    <label cLabel for="list">Amount to Deposit</label>
+                      
+                    <div cFormText class="mt-2">
+                        You can deposit any amount. <br/>
+                        
+                        <div class="alert alert-info">You will be prompted to approve your token for this contract</div>
+                    </div>
+  
+                      <div class="error-message" *ngIf="depositFormGroup.get('amount').invalid && depositFormGroup.get('amount').touched">
+                          <div *ngFor="let error of  objectKeys(depositFormGroup.get('amount')?.errors)">                                        
+                          {{validationMessages.amount[error]}}
+                          </div>
+                      </div>
+  
+                  </div>
+              </div>
+              
+  
+          </div>
+        </form>
+    </c-modal-body>
+  
+    <c-modal-footer>
+        
+      <button (click)="closeDepositModal()" cButton color="secondary">
+        Close
+      </button>
+      <button class="btn btn-primary" *ngIf="depositFormGroup" [disabled]="depositFormGroup.invalid " (click)="depositCoin()">Submit</button>
+    </c-modal-footer>
+</c-modal>
+
+
+
+
+<c-modal  [visible]="withdrawModalVisible" >
+    <c-modal-header>
+      <h5 cModalTitle>Withdraw <span class="ml-2 text-white">{{selectedToken?.name??''}}</span> </h5>
+      <button (click)="closeWithdrawModal()" cButtonClose>x</button>
+    </c-modal-header>
+  
+    <c-modal-body>
+    
+        
+
+        <form *ngIf="withdrawFormGroup"  [formGroup]="withdrawFormGroup" class="whitelist-form needs-validation"  novalidate [validated]="false"  cForm>
+          <div class="row">
+              
+              <div class="col-12" >
+                  <div [cFormFloating]="true" class="my-3" >
+                    <input cFormControl  type="number"  placeholder="" formControlName="amount"  sizing="sm"  [ngClass]="{ 'is-invalid': withdrawFormGroup.get('amount').touched && withdrawFormGroup.get('amount').invalid, 'is-valid': withdrawFormGroup.get('amount').touched && withdrawFormGroup.get('amount').valid }"/>
+
+                    <label cLabel for="list">Amount to Withdraw</label>
+                      
+                    <div cFormText class="mt-2">
+                        You can withdraw any amount up to what you have. <br/>
+                        
+                        <div class="alert alert-info">You will be prompted to approve your token for this contract</div>
+                    </div>
+  
+                      <div class="error-message" *ngIf="withdrawFormGroup.get('amount').invalid && withdrawFormGroup.get('amount').touched">
+                          <div *ngFor="let error of  objectKeys(withdrawFormGroup.get('amount')?.errors)">                                        
+                          {{validationMessages.amount[error]}}
+                          </div>
+                      </div>
+  
+                  </div>
+              </div>
+              
+  
+          </div>
+        </form>
+    </c-modal-body>
+  
+    <c-modal-footer>
+        
+      <button (click)="closeWithdrawModal()" cButton color="secondary">
+        Close
+      </button>
+      <button class="btn btn-primary" *ngIf="withdrawFormGroup" [disabled]="withdrawFormGroup.invalid " (click)="withdrawCoin()">Submit</button>
+    </c-modal-footer>
+</c-modal>
+

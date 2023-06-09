@@ -1,0 +1,151 @@
+<c-toaster class="p-3" position="fixed" [placement]="placement"></c-toaster>
+
+<div class="card bg-primary text-light" >
+    <div class="card-header">
+        <h3>Deposit Assets</h3>
+    </div>
+    <div class="card-body text-light">
+        <span *ngIf="!assets">Loading ...</span>
+
+        <table *ngIf="assets" class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="px-4 font-semibold text-white-200">
+                  Assets
+                </th>
+                <th scope="col" class="px-4 py-2 font-semibold text-white-200">
+                  Wallet Balance
+                </th>
+                <th scope="col" class="px-4 py-2 font-semibold text-white-200">
+                  APY
+                </th>
+                <th scope="col" class="px-4 py-2 font-semibold text-white-200">
+                  Can be Collateral
+                </th>
+                <th scope="col" class="px-4 py-2 font-semibold"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+                <tr  *ngFor="let token of  assets">
+                    <th scope="row" class="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+                        <div class="flex items-center">
+                          <img [src]="'/assets/token-logos/' + token.name.toLowerCase() + '.png'" class="img-fluid" alt="coin image" style="width:80px"  />
+                          <div class="ml-2 text-white">{{token.name}}</div>
+                        </div>
+                    </th>
+                    <td class="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        <div class="text-base font-medium text-white">{{token.walletBalance.amount | number: '1.2-4'}}</div>
+                        <div class="text-sm text-white">(${{token.walletBalance.inDollars| number: '1.2-2'}})</div>
+                        
+                    </td>
+                    <td class="border-t-0 px-4 border  align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        <div class="text-base">N/A</div>
+                    </td>
+                    <td class="border-t-0 px-4 border  align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        <div class="text-green-700 text-lg font-large"> &#10004; </div>
+                    </td>
+                    <td class="border-t-0 px-4 border align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        <button (click)="openDepositModal(token)" class="btn btn-success m-2 p-2">Deposit</button>
+
+                        <button (click)="openAssetDetailsModal(token)" class="btn btn-info m-2 p-2">Details</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<c-modal id="depositModal" [visible]="depositCoinModalVisible" >
+    <c-modal-header>
+      <h5 cModalTitle>Deposit <span class="ml-2 text-white">{{selectedToken?.name??''}}</span> </h5>
+      <button (click)="closeDepositModal()" cButtonClose>x</button>
+    </c-modal-header>
+  
+    <c-modal-body>
+    
+        
+
+        <form *ngIf="depositFormGroup"  [formGroup]="depositFormGroup" class="whitelist-form needs-validation"  novalidate [validated]="false"  cForm>
+          <div class="row">
+              
+              <div class="col-12" >
+                  <div [cFormFloating]="true" class="my-3" >
+                    <input cFormControl  type="number"  placeholder="" formControlName="amount"  sizing="sm"  [ngClass]="{ 'is-invalid': depositFormGroup.get('amount').touched && depositFormGroup.get('amount').invalid, 'is-valid': depositFormGroup.get('amount').touched && depositFormGroup.get('amount').valid }"/>
+
+                    <label cLabel for="list">Amount to Deposit</label>
+                      
+                    <div cFormText class="mt-2">
+                        You can deposit any amount. <br/>
+                        
+                        <div class="alert alert-info">You will be prompted to approve your token for this contract</div>
+                    </div>
+  
+                      <div class="error-message" *ngIf="depositFormGroup.get('amount').invalid && depositFormGroup.get('amount').touched">
+                          <div *ngFor="let error of  objectKeys(depositFormGroup.get('amount')?.errors)">                                        
+                          {{validationMessages.amount[error]}}
+                          </div>
+                      </div>
+  
+                  </div>
+              </div>
+              
+  
+          </div>
+        </form>
+    </c-modal-body>
+  
+    <c-modal-footer>
+        
+      <button (click)="closeDepositModal()" cButton color="secondary">
+        Close
+      </button>
+      <button class="btn btn-primary" *ngIf="depositFormGroup" [disabled]="depositFormGroup.invalid " (click)="depositCoin()">Submit</button>
+    </c-modal-footer>
+</c-modal>
+
+
+
+
+
+
+
+<c-modal id="assetDetailsModal" [visible]="assetDetailsModalVisible" >
+    <c-modal-header>
+      <h5 cModalTitle>Details <span class="ml-2 text-white">{{selectedToken?.name??''}}</span> </h5>
+      <button (click)="closeAssetDetailsModal()" cButtonClose>x</button>
+    </c-modal-header>
+  
+    <c-modal-body>
+    
+        <asset-details [token]="selectedToken"></asset-details>
+    </c-modal-body>
+  
+    <c-modal-footer>
+        
+      <button (click)="closeAssetDetailsModal()" cButton color="secondary">
+        Close
+      </button>
+      
+    </c-modal-footer>
+</c-modal>
