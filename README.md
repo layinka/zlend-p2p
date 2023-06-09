@@ -4,6 +4,8 @@ DeFi Lending platform which lets you lend, borrow crypto assets and helps you ea
 
 Depositors are rewarded with zLend tokens for depositing into the Lending Pool. Depositors will also be able to share from the interest made on the platforms from loans.
 
+Loans are over collaterized, with LTV ratio of 80%
+
 ## Networks supported
 zLend aims to be multichain. Current networks supported are
 
